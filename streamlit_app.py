@@ -11,14 +11,25 @@ import typing as t
 
 import pandas as pd
 import streamlit as st
-import boto3
-import botocore
+
+try:  # Optional AWS dependencies
+    import boto3
+    import botocore
+except ModuleNotFoundError:
+    boto3 = None  # type: ignore[assignment]
+    botocore = None  # type: ignore[assignment]
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Page
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Compliance Ingestion (S3-only)", page_icon="✅", layout="wide")
 st.title("✅ Distributor Reports — Compliance Intake (Streamlit • S3)")
+
+if boto3 is None or botocore is None:
+    st.error(
+        "Missing AWS dependencies. Install `boto3` and `botocore` to enable S3 uploads."
+    )
+    st.stop()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Config via st.secrets (S3 only)
